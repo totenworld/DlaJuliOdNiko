@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dla Juli ❤️</title>
+<style>
+*{box-sizing:border-box}
+:root{--pink:#ffb6d5;--plum:#32152e;--panel:rgba(255,255,255,.08)}
+body{margin:0;padding:20px;font-family:Arial,sans-serif;color:#fff0f6;background:linear-gradient(135deg,#170d1c,#32152e,#542044);min-height:100vh}
+.container{max-width:900px;margin:auto}
+header{text-align:center;padding:35px 15px 20px}
+h1{font-size:42px;color:var(--pink)}h2{color:var(--pink);margin-top:0}p{line-height:1.7}
+button{border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px 17px;background:#d96b9d;color:white;font-size:15px;cursor:pointer;transition:.2s}
+button:hover{background:#f08bb8;transform:translateY(-2px)}
+button:focus-visible,input:focus-visible{outline:2px solid #e9a4ff;outline-offset:3px}
+.menu{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:20px 0}
+.section{display:none;background:var(--panel);border:1px solid rgba(255,182,213,.2);border-radius:18px;padding:25px;margin:20px 0}
+.section.active{display:block}
+.counter{text-align:center;background:rgba(255,182,213,.12);padding:18px;border-radius:15px}
+.counter strong{color:var(--pink);font-size:24px}.small{color:#dcb9cb;font-size:13px}
+.reason{background:rgba(255,182,213,.12);border-radius:12px;padding:20px;text-align:center;margin:15px 0;font-size:19px;min-height:65px}
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-top:20px}
+.gallery img{width:100%;height:170px;object-fit:cover;border-radius:12px;cursor:pointer;transition:.2s}.gallery img:hover{transform:scale(1.03)}
+.photo-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);justify-content:center;align-items:center;z-index:30;padding:20px}
+.photo-modal img{max-width:95%;max-height:90vh;border-radius:12px}
+.letter{white-space:pre-wrap;line-height:1.9;background:rgba(255,255,255,.06);padding:20px;border-radius:12px}
+input{width:100%;padding:12px;border:1px solid #d96b9d;border-radius:10px;background:#241526;color:white;margin:8px 0 15px;font-size:15px}
+.quiz-box{background:rgba(255,255,255,.06);border-radius:15px;padding:20px;margin-top:15px}
+.quiz-options{display:grid;gap:10px;margin:20px 0}.quiz-options button{text-align:left;background:#513047}
+.quiz-options button:disabled{opacity:.85;cursor:default}
+.quiz-progress{height:9px;background:#4a3045;border-radius:10px;overflow:hidden;margin:12px 0}
+.quiz-progress-bar{height:100%;width:0;background:#ff9fc7;transition:width .3s}
+.quiz-feedback{min-height:30px;color:var(--pink);font-weight:bold}
+.quiz-finish{display:none;text-align:center}footer{text-align:center;color:#dcb9cb;padding:30px 10px}
+
+/* LOBBY */
+.lobby{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:22px;background:radial-gradient(circle at 50% 15%,#653253,#32152e 48%,#160c1a);text-align:center;transition:opacity .55s}
+.lobby:before,.lobby:after{content:"";position:absolute;width:260px;height:260px;border:1px solid #ffb6d522;border-radius:50%;animation:orbit 18s linear infinite}
+.lobby:after{width:360px;height:360px;animation-direction:reverse}
+.lobby-card{position:relative;z-index:1;max-width:620px;width:100%;padding:42px 25px;background:#ffffff0c;border:1px solid #ffb6d544;border-radius:25px;box-shadow:0 20px 80px #0006;backdrop-filter:blur(8px)}
+.lobby-heart{font-size:65px;color:#ff9fc7;animation:beat 1.7s infinite}
+.lobby-card h1{margin:8px 0;font-size:clamp(36px,7vw,58px)}
+.lobby-card h2{font-size:21px}.lobby-card p{color:#f1d8e5}
+.lobby-date{letter-spacing:3px;font-size:11px;color:#ffb6d5!important}
+.lobby-small{font-size:12px;margin-top:22px}
+@keyframes beat{50%{transform:scale(1.13)}}@keyframes orbit{to{transform:rotate(360deg)}}
+
+/* TAJNA MISJA */
+#tajne{background:#0a0812;border:1px solid #8d45d9;color:#eee4ff;overflow:hidden;position:relative}
+#tajne:before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,#a855f708 4px),radial-gradient(circle at 20% 10%,#7928ca22,transparent 45%)}
+#tajne>*{position:relative}
+.mission{font-family:Consolas,monospace;color:#e9d5ff}
+.mission-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#c084fc;font-size:12px;letter-spacing:2px}
+.mission-lock{text-align:center;font-size:60px;animation:lockPulse 2s infinite}
+@keyframes lockPulse{50%{filter:drop-shadow(0 0 15px #c084fc);transform:translateY(-4px)}}
+.mission-title{text-align:center;color:#d8b4fe;font-size:clamp(26px,5vw,40px);letter-spacing:3px}
+.mission-sub{text-align:center;color:#a78bfa;letter-spacing:4px}
+.mission-panel{background:#120d20;border:1px solid #7135a8;border-radius:14px;padding:18px;margin:16px 0;box-shadow:inset 0 0 25px #8b5cf611}
+.mission-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;font-size:13px;color:#c4b5fd}
+.mission-meta span{padding:8px;background:#ffffff08;border-radius:7px}
+.mission-progress{height:10px;background:#292039;border-radius:20px;overflow:hidden;margin:12px 0}
+.mission-progress>div{height:100%;width:0;background:linear-gradient(90deg,#7c3aed,#e879f9);transition:width .5s}
+.mission-progress-label{display:flex;justify-content:space-between;font-size:12px;color:#c4b5fd}
+.mission h3{color:#d8b4fe}.mission .terminal-text{color:#c4b5fd;line-height:1.8}
+.mission .cipher{font-size:clamp(24px,5vw,34px);text-align:center;letter-spacing:5px;color:#f0abfc;text-shadow:0 0 12px #a855f7;padding:15px;overflow-wrap:anywhere}
+.mission input{background:#090711;border-color:#7e22ce;color:#f5d0fe;font-family:Consolas,monospace}
+.mission button{background:#6b21a8;border:1px solid #c084fc;font-family:Consolas,monospace;letter-spacing:1px}
+.mission button:hover{background:#9333ea}
+.mission .hint{display:none;color:#f0abfc;border-left:3px solid #c084fc;padding:9px 12px;background:#a855f711}
+.mission .feedback{min-height:28px;color:#f0abfc;font-weight:bold}
+.mission .denied{color:#f87171;animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.grid25{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;max-width:360px;margin:15px auto}
+.grid25 div{padding:9px 3px;text-align:center;border:1px solid #7135a8;background:#21152f;border-radius:5px;color:#e9d5ff}
+.grid25 .axis{background:#3b1b57;color:#f0abfc;font-weight:bold}
+.mission-stage{animation:stageIn .45s ease}
+@keyframes stageIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.process-list{list-style:none;padding:0;line-height:2}
+.process-list li{opacity:0;animation:reveal .35s forwards;color:#d8b4fe}
+.process-list li:nth-child(1){animation-delay:.1s}.process-list li:nth-child(2){animation-delay:.25s}.process-list li:nth-child(3){animation-delay:.4s}.process-list li:nth-child(4){animation-delay:.55s}.process-list li:nth-child(5){animation-delay:.7s}.process-list li:nth-child(6){animation-delay:.85s}
+@keyframes reveal{to{opacity:1}}
+#confessionView{display:none;text-align:center;background:linear-gradient(145deg,#fff0f6,#f9d8e8);color:#6b294d;border-radius:16px;padding:24px;position:relative;overflow:hidden}
+#confessionView h2{color:#a83f72}
+.envelope{font-size:70px;animation:openEnvelope 1.2s ease}
+@keyframes openEnvelope{0%{transform:rotateX(0) scale(.7);opacity:.2}100%{transform:rotateX(360deg) scale(1);opacity:1}}
+.confession-text{white-space:pre-wrap;text-align:left;line-height:1.9;background:#ffffffaa;border-radius:12px;padding:20px;color:#713653}
+.heart-float{position:absolute;bottom:-30px;left:10%;font-size:22px;animation:floatHeart 5s linear infinite;pointer-events:none}
+.heart-float:nth-child(2){left:75%;animation-delay:1.2s}.heart-float:nth-child(3){left:45%;animation-delay:2.4s}
+@keyframes floatHeart{to{transform:translateY(-650px) rotate(25deg);opacity:0}}
+@media(max-width:500px){body{padding:12px}h1{font-size:32px}.section{padding:18px}.mission{font-size:14px}.grid25{gap:3px}.grid25 div{padding:7px 1px;font-size:13px}}
+</style>
+</head>
+<body>
+
+<div id="passGate" style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:22px;background:radial-gradient(circle at 50% 15%,#653253,#32152e 48%,#160c1a);text-align:center">
+  <div class="lobby-card" style="max-width:420px">
+    <div class="lobby-heart">🔒</div>
+    <h2 style="margin:10px 0">Strona chroniona hasłem</h2>
+    <p>Wpisz hasło, aby przejść dalej ❤️</p>
+    <input type="password" id="sitePassInput" placeholder="Wpisz hasło..." onkeydown="if(event.key==='Enter')checkSitePass()">
+    <button onclick="checkSitePass()">Odblokuj ❤️</button>
+    <p id="passError" style="color:#ff8fa3;min-height:22px;margin-top:12px;font-weight:bold"></p>
+  </div>
+</div>
+<script>
+function checkSitePass(){
+  const val=document.getElementById("sitePassInput").value.trim();
+  if(val==="20102011"){
+    document.getElementById("passGate").style.display="none";
+  }else{
+    document.getElementById("passError").textContent="Niepoprawne hasło! Spróbuj ponownie.";
+  }
+}
+</script>
+
+<section class="lobby" id="lobby">
+  <div class="lobby-card">
+    <div class="lobby-date">13.07.2026 — NASZA HISTORIA</div>
+    <div class="lobby-heart">♡</div>
+    <h1>Witaj, Jula ❤️</h1>
+    <h2>Mam dla Ciebie coś specjalnego...</h2>
+    <p>Małe miejsce pełne naszych wspomnień, zdjęć i chwil.</p>
+    <button onclick="enterSite()">Odkryj nasz świat ❤️</button>
+    <p class="lobby-small">Stworzone specjalnie dla Ciebie</p>
+  </div>
+</section>
+
+<div class="container" id="mainSite" style="display:none">
+<header><h1>Hej, Jula! ❤️</h1><p>Przygotowałem coś specjalnego dla Ciebie.</p></header>
+<div class="counter"><p>Jesteśmy razem już:</p><strong id="daysTogether">❤️</strong><p class="small">od 13 lipca 2026</p></div>
+
+<nav class="menu">
+<button onclick="showSection('historia')">Nasza historia</button>
+<button onclick="showSection('powody')">Za co Cię kocham</button>
+<button onclick="showSection('wspomnienia')">Zdjęcia</button>
+<button onclick="showSection('list')">List dla Ciebie</button>
+<button onclick="showSection('prezent')">Mały prezent</button>
+<button onclick="showSection('quiz')">Quiz o nas</button>
+<button onclick="showSection('muzyka')">Nasza muzyka</button>
+<button onclick="showSection('tajne')">ŚCIŚLE TAJNE 🔒</button>
+<button onclick="showSection('daty')">Ważne daty</button>
+</nav>
+
+<section class="section active" id="historia">
+<h2>Nasza historia ❤️</h2>
+<p>Wszystko zaczęło się 13 lipca 2026 roku. To właśnie wtedy zostaliśmy parą. Od tego dnia mam przy sobie osobę, która jest dla mnie naprawdę wyjątkowa.</p>
+<p>Chcę tworzyć z Tobą kolejne wspomnienia, przeżywać fajne chwile i po prostu być obok Ciebie.</p>
+</section>
+
+<section class="section" id="powody">
+<h2>Za co Cię kocham? 💗</h2><p>Jest dużo powodów, ale oto kilka z nich:</p>
+<div class="reason" id="reasonText">Kliknij przycisk, żeby zobaczyć jeden z powodów ❤️</div>
+<button onclick="nextReason()">Pokaż kolejny powód</button>
+</section>
+
+<section class="section" id="wspomnienia">
+<h2>Nasze wspomnienia 📸</h2><p>Kliknij zdjęcie, żeby je powiększyć.</p>
+<div class="gallery">
+<img src="zdjecia/foto1.jpg.jfif" alt="Zdjęcie 1" onclick="openPhoto(this.src)">
+<img src="zdjecia/foto2.jpg.jfif" alt="Zdjęcie 2" onclick="openPhoto(this.src)">
+<img src="zdjecia/foto3.jpg.jfif" alt="Zdjęcie 3" onclick="openPhoto(this.src)">
+<img src="zdjecia/foto4.jpg.jfif" alt="Zdjęcie 4" onclick="openPhoto(this.src)">
+<img src="zdjecia/foto5.jpg.jfif" alt="Zdjęcie 5" onclick="openPhoto(this.src)">
+<img src="zdjecia/foto6.jpg.jfif" alt="Zdjęcie 6" onclick="openPhoto(this.src)">
+<img src="zdjecia/foto7.jpg.jfif" alt="Zdjęcie 7" onclick="openPhoto(this.src)">
+<img src="zdjecia/foto8.jpg.jfif" alt="Zdjęcie 8" onclick="openPhoto(this.src)">
+<img src="zdjecia/foto9.jpg.jfif" alt="Zdjęcie 9" onclick="openPhoto(this.src)">
+<img src="zdjecia/foto10.jpg.jfif" alt="Zdjęcie 10" onclick="openPhoto(this.src)">
+</div></section>
+<div class="photo-modal" id="photoModal" onclick="closePhoto()"><img id="bigPhoto" alt="Powiększone zdjęcie"></div>
+
+<section class="section" id="list">
+<h2>List dla Ciebie 💌</h2>
+<div class="letter">moj kochany aniolku
+
+chcialem stworzyc dla ciebie takie male miejsce w internecie w ktorym zostanie kawalek naszej historii i do ktorego zawsze bedziesz mogla wracac
+
+kto by pomyslal ze od spotkania przy fontannach i bawienia sie jakims papierkiem zacznie sie cos tak pieknego
+
+13 lipca 2026 o godzinie 16:16 weszlismy w zwiazek i od tamtego momentu stworzylismy juz tyle wspomnien ze az ciezko je wszystkie zliczyc
+
+uwielbiam nasze spacery nasze glupawki nasze dlugie przytulasy i nawet te dni kiedy po prostu lezymy i nic nie robimy bo dla mnie nie jest wazne co robimy tylko to ze spedzamy razem czas
+
+dziekuje ci za twoja troske za twoje poczucie humoru za wszystkie chwile kiedy poprawialas mi humor i za to ze moge przy tobie byc soba
+
+marzy mi sie kiedys zobaczyc cie w bialej sukni zamieszkac razem w pieknym domu w gdansku zwiedzic z toba kawalek swiata i stworzyc jeszcze mnostwo wspomnien
+
+chcialbym zebysmy zawsze potrafili ze soba rozmawiac szanowac sie nawzajem wspierac sie w naszych marzeniach i dbac o siebie nawet podczas tych gorszych dni
+
+mam nadzieje ze za kilka lat otworzymy razem ta strone i bedziemy wspominac nasze poczatki ze smiechem
+
+kocham cie moja gwiazdeczko i dziekuje ci za wszystkie nasze dotychczasowe chwile
+
+z miloscia twoj Ninus
+
+13.07.2026 ♡</div>
+</section>
+
+<section class="section" id="prezent"><h2>Mały prezent 🎁</h2><p>Jesteś dla mnie kimś naprawdę wyjątkowym. Dziękuję, że jesteś częścią mojego życia.</p><p style="text-align:center;font-size:25px">Kocham Cię! ❤️</p></section>
+
+<section class="section" id="quiz">
+<h2>Jak dobrze znasz naszą historię? ❤️</h2>
+<div id="quizIntro"><p>38 pytań, 30 minut i 7 etapów. Za każdą poprawną odpowiedź dostajesz 1 punkt.</p><button onclick="startQuiz()">Rozpocznij quiz</button></div>
+<div id="quizGame" style="display:none"><div><span id="questionNumber">Pytanie 1/38</span><span style="float:right" id="timer">30:00</span></div>
+<div class="quiz-progress"><div class="quiz-progress-bar" id="progressBar"></div></div>
+<p class="small" id="stageName"></p><h3 id="questionText"></h3><div class="quiz-options" id="quizOptions"></div><div class="quiz-feedback" id="quizFeedback"></div>
+<button id="nextQuestionButton" onclick="nextQuestion()" style="display:none">Następne pytanie</button></div>
+<div class="quiz-finish" id="quizFinish"><h3>Quiz zakończony! ❤️</h3><p id="finalScore"></p><p id="finalMessage"></p><button onclick="startQuiz()">Rozwiąż ponownie</button></div>
+</section>
+
+<section class="section" id="muzyka">
+    <h2>Nasza muzyka 🎵</h2>
+    <p>Zakochaliśmy się w tej piosence, a z tym w sobie się zakochaliśmy. Pamiętasz? ❤️</p>
+
+    <audio controls style="width:100%">
+        <source src="./muzyka/muzyka.mp3" type="audio/mpeg">
+    </audio>
+</section>
+
+<section class="section" id="tajne">
+<div class="mission" id="missionTerminal">
+<div class="mission-top"><span>SECURE CONNECTION // NIKO</span><span>ENCRYPTION: ACTIVE</span></div>
+<div id="missionIntro" class="mission-stage">
+<div class="mission-lock">🔒</div>
+<h2 class="mission-title">ŚCIŚLE TAJNE</h2><div class="mission-sub">PROJEKT 16:16</div>
+<div class="mission-panel mission-meta">
+<span>Adresat: Jula</span><span>Nadawca: Niko</span><span>Status: dostęp zablokowany</span><span>Poziom zabezpieczeń: maksymalny</span>
+</div>
+<p class="terminal-text">Wykryto zaszyfrowaną wiadomość przeznaczoną specjalnie dla ciebie. Aby uzyskać do niej dostęp, musisz przejść przez sześć poziomów zabezpieczeń. Wszystkie rozwiązania są związane z naszą historią.</p>
+<button onclick="startMission()">ROZPOCZNIJ MISJĘ</button>
+</div>
+<div id="missionGame" style="display:none">
+<div class="mission-progress-label"><span id="missionStageLabel">ETAP 1/6</span><span id="missionCount">0/6 UKOŃCZONO</span></div>
+<div class="mission-progress"><div id="missionProgressBar"></div></div>
+<div id="missionStage" class="mission-stage"></div>
+</div>
+<div id="missionComplete" class="mission-stage" style="display:none">
+<div class="mission-lock">🔓</div><h2 class="mission-title">DOSTĘP PRZYZNANY</h2>
+<p class="terminal-text">Weryfikacja zakończona pomyślnie.<br>Odnaleziono sekretną wiadomość.<br>Adresat: Jula<br>Nadawca: Niko</p>
+<ul class="process-list"><li>✓ Weryfikacja daty</li><li>✓ Odszyfrowanie wspomnień</li><li>✓ Odzyskanie ukrytej wiadomości</li><li>✓ Synchronizacja czasu</li><li>✓ Identyfikacja prezentu</li><li>✓ Weryfikacja kodu końcowego</li></ul>
+<button onclick="openConfession()">OTWÓRZ SEKRETNE WYZNANIE</button>
+</div>
+</div>
+<div id="confessionView">
+<div class="heart-float">♥</div><div class="heart-float">♡</div><div class="heart-float">♥</div>
+<div class="envelope">💌</div><h2>Moje sekretne wyznanie</h2>
+<div class="confession-text">skoro juz tutaj dotarlas to chyba czas na moje sekretne wyznanie
+
+wiesz jula tak naprawde jednym z moich najwiekszych marzen jest stworzenie z toba domu w ktorym bedzie pelno smiechu milosci i spokoju domu bez krzyku w ktorym oboje bedziemy czuli sie bezpiecznie
+
+chcialbym zebysmy wspierali sie w spelnianiu swoich marzen cieszyli sie ze swoich sukcesow i potrafili rozmawiac nawet o najtrudniejszych rzeczach
+
+marzy mi sie zobaczyc cie kiedys w bialej sukni przezyc z toba nasz pierwszy taniec i po latach wspominac jak to wszystko zaczelo sie od glupiego papierka
+
+wiem ze jeszcze wiele przed nami i nie musimy sie z niczym spieszyc ale naprawde cieszy mnie mysl o naszej wspolnej przyszlosci
+
+kocham cie moja gwiazdeczko ❤️</div>
+<p>Z miłością, Niko ♡</p>
+</div>
+</section>
+
+<section class="section" id="daty">
+<h2>Ważne daty 📅</h2><p>13 lipca 2026 — dzień, w którym zostaliśmy parą ❤️</p><p>24 czerwca — moje urodziny 🎂</p>
+<h3>Nasze własne daty</h3><input type="text" id="eventName" placeholder="Nazwa wydarzenia"><input type="date" id="eventDate"><button onclick="addEvent()">Dodaj datę</button><div id="eventsList"></div>
+</section>
+<footer>Zrobione specjalnie dla Ciebie, Jula ❤️</footer>
+</div>
+
+<script>
+const reasons=["Za Twój uśmiech ❤️","Za to, że potrafisz poprawić mi humor.","Za Twój charakter.","Za każdą wspólną chwilę.","Za to, że mogę być przy Tobie.","Za Twoje poczucie humoru.","Za to, że jesteś po prostu sobą."];
+let reasonIndex=0;
+function nextReason(){document.getElementById("reasonText").textContent=reasons[reasonIndex];reasonIndex=(reasonIndex+1)%reasons.length}
+function enterSite(){const lobby=document.getElementById("lobby");lobby.style.opacity="0";setTimeout(()=>{lobby.style.display="none";document.getElementById("mainSite").style.display="block"},550)}
+function showSection(id){document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");if(id==="tajne")restoreMission()}
+function openPhoto(src){document.getElementById("bigPhoto").src=src;document.getElementById("photoModal").style.display="flex"}
+function closePhoto(){document.getElementById("photoModal").style.display="none"}
+function addEvent(){const name=document.getElementById("eventName").value.trim(),date=document.getElementById("eventDate").value;if(!name||!date){alert("Wpisz nazwę wydarzenia i wybierz datę.");return}const item=document.createElement("p");item.textContent=name+" — "+date;document.getElementById("eventsList").appendChild(item);document.getElementById("eventName").value="";document.getElementById("eventDate").value=""}
+function updateDaysTogether(){const start=new Date(2026,6,13);const today=new Date();start.setHours(0,0,0,0);today.setHours(0,0,0,0);const days=Math.floor((today-start)/86400000);document.getElementById("daysTogether").textContent=days>=0?days+" dni ❤️":"Już niedługo! ❤️"}
+updateDaysTogether();
+
+/* QUIZ — 38 pytań */
+const questions=[
+{stage:"Etap 1 – Nasze początki",q:"Kiedy zostaliśmy parą?",a:["15 lipca 2026","13 lipca 2026","13 czerwca 2026"],correct:1},
+{q:"Gdzie pierwszy raz się spotkaliśmy?",a:["Na Wzorcowni przy fontannach","Na Czarnym","W parku"],correct:0},
+{q:"Kto z nas pierwszy napisał do drugiego?",a:["Jula","Oboje jednocześnie","Niko"],correct:2},
+{q:"Kto z nas pierwszy powiedział „kocham cię”?",a:["Niko","Jula","Oboje jednocześnie"],correct:0},
+{q:"Gdzie był nasz pierwszy pocałunek?",a:["Na Wzorcowni","Na Czarnym","W parku"],correct:1},
+{q:"Co robiliśmy podczas naszego pierwszego spotkania?",a:["Jedliśmy lody","Robiliśmy zdjęcia","Bawiliśmy się papierkiem"],correct:2},
+{stage:"Etap 2 – Jak dobrze mnie znasz?",q:"Jaki jest mój ulubiony sport?",a:["Boks","Piłka nożna","Koszykówka"],correct:0},
+{q:"Jak najczęściej się do ciebie zwracam?",a:["Misiu, słoneczko, księżniczko","Maluchu, aniołku, gwiazdeczko","Kotku, królewno, żabko"],correct:1},
+{q:"Co najlepiej poprawia mi humor?",a:["Jedzenie","Spanie","Długi przytulas od ciebie"],correct:2},
+{q:"Jakie jest moje największe marzenie związane z nami?",a:["Żeby nasza relacja trwała w nieskończoność","Żebyśmy zwiedzili cały świat","Żebyśmy otworzyli wspólną firmę"],correct:0},
+{q:"Jak najchętniej spędzam z tobą czas poza domem?",a:["W kinie","Na spacerze","Na zakupach"],correct:1},
+{q:"Kim chciałbym zostać w przyszłości?",a:["Policjantem","Mechanikiem","Informatykiem"],correct:2},
+{stage:"Etap 3 – Nasze wspomnienia",q:"Dlaczego kiedyś rozbolała cię głowa od moich perfum?",a:["Za dużo razy się popsikałem i byliśmy w domu","Wąchałaś za dużo perfum w sklepie","Rozlałem perfumy"],correct:0},
+{q:"Co było pierwszym prezentem, który ci dałem?",a:["Kwiaty","List, który dałem ci w parku","Pluszak"],correct:1},
+{q:"Ile kartek połączyłem, pisząc dla ciebie list?",a:["2","4","3"],correct:2},
+{stage:"Etap 4 – Kto z nas?",q:"Kto z nas częściej zasypia?",a:["Niko","Jula","Oboje tak samo"],correct:1},
+{q:"Kto z nas pisze dłuższe dobranocki?",a:["Niko","Jula","Oboje tak samo"],correct:0},
+{q:"Kto z nas częściej robi głupie miny?",a:["Niko","Oboje","Jula"],correct:2},
+{q:"Kto z nas dłużej się szykuje?",a:["Jula","Niko","Oboje tak samo"],correct:0},
+{q:"Kto z nas częściej wpada na dziwne pomysły?",a:["Jula","Niko","Oboje"],correct:1},
+{q:"Kto z nas częściej śmieje się w nieodpowiednim momencie?",a:["Niko","Jula","Oboje"],correct:2},
+{q:"Kto z nas jest większym śpiochem?",a:["Jula","Niko","Oboje tak samo"],correct:0},
+{q:"Kto z nas częściej proponuje, żeby coś zjeść?",a:["Jula","Oboje","Niko"],correct:1},
+{stage:"Etap 5 – Nasza przyszłość",q:"Jak wyobrażam sobie nas za 5 lat?",a:["W podróży dookoła świata","Razem w pięknym domu","Mieszkających za granicą"],correct:1},
+{q:"W jakim mieście chciałbym z tobą zamieszkać?",a:["Warszawa","Kraków","Gdańsk"],correct:2},
+{q:"Jakie miejsca chciałbym kiedyś z tobą odwiedzić?",a:["Norwegia, Paryż, Bora Bora i Barcelona","Londyn, Rzym, Dubaj i Berlin","Tokio, Madryt, Ateny i Nowy Jork"],correct:0},
+{stage:"Etap 6 – Poziom ekstremalny",q:"Ile mniej więcej razy byliśmy razem w kinie?",a:["1–2 razy","3–4 razy","6–7 razy"],correct:1},
+{q:"Jaki był pierwszy prezent, który od ciebie dostałem?",a:["Perfumy","Pluszak","Projektor"],correct:2},
+{q:"Jaki jest mój ulubiony napój?",a:["Arizona","Pepsi","Lipton"],correct:0},
+{q:"Jaki jest mój ulubiony kolor?",a:["Czarny","Fioletowy","Niebieski"],correct:1},
+{q:"Jakie jest moje ulubione jedzenie?",a:["Pizza","Spaghetti","Kluski z serem"],correct:2},
+{q:"Jakie jest moje wymarzone auto?",a:["Ford Raptor 4x4","BMW M5","Audi RS6"],correct:0},
+{q:"Jaka piosenka najbardziej mi się z tobą kojarzy?",a:["Lawenda","Peeling","Malibu"],correct:1},
+{q:"Co najbardziej zapamiętałem z dnia, w którym zostaliśmy parą?",a:["Pogodę","Miejsce","Dokładną godzinę"],correct:2},
+{stage:"Etap 7 – Wielki finał",q:"O której dokładnie godzinie zostaliśmy parą?",a:["16:30","16:16","17:17"],correct:1},
+{q:"Kiedy mam urodziny?",a:["24 czerwca","24 lipca","26 czerwca"],correct:0},
+{q:"Jakiego telefonu używam?",a:["iPhone 11","iPhone 13","iPhone 12 Pro"],correct:0},
+{q:"Co najbardziej lubię robić z tobą, kiedy jesteśmy w domu?",a:["Oglądać filmy","Grać w gry","Spać"],correct:2}
+];
+let currentQuestion=0,score=0,timeLeft=1800,timerInterval=null,answered=false,currentStage="";
+function updateTimer(){const m=Math.floor(timeLeft/60),s=timeLeft%60;document.getElementById("timer").textContent=m+":"+String(s).padStart(2,"0");if(timeLeft<=0){finishQuiz();return}timeLeft--}
+function startQuiz(){currentQuestion=0;score=0;timeLeft=1800;answered=false;currentStage="";clearInterval(timerInterval);document.getElementById("quizIntro").style.display="none";document.getElementById("quizFinish").style.display="none";document.getElementById("quizGame").style.display="block";showQuestion();updateTimer();timerInterval=setInterval(updateTimer,1000)}
+function showQuestion(){answered=false;const q=questions[currentQuestion];document.getElementById("questionNumber").textContent="Pytanie "+(currentQuestion+1)+"/38";document.getElementById("progressBar").style.width=(currentQuestion/questions.length*100)+"%";if(q.stage)currentStage=q.stage;document.getElementById("stageName").textContent=currentStage;document.getElementById("questionText").textContent=q.q;document.getElementById("quizFeedback").textContent="";document.getElementById("nextQuestionButton").style.display="none";document.getElementById("nextQuestionButton").textContent=currentQuestion===questions.length-1?"Zobacz wynik":"Następne pytanie";const box=document.getElementById("quizOptions");box.innerHTML="";q.a.forEach((a,i)=>{const b=document.createElement("button");b.textContent=String.fromCharCode(65+i)+". "+a;b.onclick=()=>checkAnswer(i);box.appendChild(b)})}
+function checkAnswer(selected){if(answered)return;answered=true;const q=questions[currentQuestion];document.querySelectorAll("#quizOptions button").forEach((b,i)=>{b.disabled=true;if(i===q.correct)b.style.background="#287a55";else if(i===selected)b.style.background="#923d55"});const f=document.getElementById("quizFeedback");if(selected===q.correct){score++;f.textContent="Dobrze! ❤️"}else f.textContent="Tym razem nie! Poprawna odpowiedź to: "+q.a[q.correct];document.getElementById("nextQuestionButton").style.display="inline-block"}
+function nextQuestion(){if(!answered)return;currentQuestion++;if(currentQuestion>=questions.length)finishQuiz();else showQuestion()}
+function finishQuiz(){clearInterval(timerInterval);document.getElementById("quizGame").style.display="none";document.getElementById("quizFinish").style.display="block";document.getElementById("progressBar").style.width="100%";document.getElementById("finalScore").textContent="Twój wynik: "+score+"/38 punktów";document.getElementById("finalMessage").textContent=score===38?"Idealnie! Znasz naszą historię na pamięć! ❤️":score>=30?"Świetny wynik! Naprawdę dobrze nas znasz! 💗":score>=20?"Całkiem nieźle! Ale jeszcze trochę wspomnień przed Tobą!":"Spokojnie, najważniejsze, że tworzymy kolejne wspomnienia razem! ❤️"}
+
+/* PROJEKT 16:16 */
+const missionSteps=[
+{title:"ETAP 1 — ODZYSKIWANIE DATY",cipher:"31 / 70 / 6202",desc:"Czasami trzeba spojrzeć na przeszłość od drugiej strony. Odwróć cyfry w każdym członie daty.",hint:"Przeczytaj każdą część daty od prawej do lewej.",answers:["13072026"],success:"Odzyskano datę rozpoczęcia związku. Pierwsze zabezpieczenie zostało przełamane.",placeholder:"Wpisz odzyskaną datę"},
+{title:"ETAP 2 — ZASZYFROWANE WSPOMNIENIE",cipher:"FCDUQBP",desc:"Każda litera wyprzedza właściwą o trzy miejsca w alfabecie A–Z. Zastosuj szyfr Cezara i cofnij każdą literę o trzy pozycje.",hint:"Litera F po cofnięciu o trzy pozycje staje się literą C.",answers:["CZARNYM"],success:"Odzyskano lokalizację pierwszego pocałunku.",placeholder:"Wpisz odszyfrowane słowo"},
+{title:"ETAP 3 — UKRYTA WIADOMOŚĆ",cipher:"PAMIĘTASZ? / I / A / P / I / E / R",desc:"Odczytaj poniższy tekst:\n\nPamietasz nasze pierwsze spotkanie?\nI te wszystkie chwile razem?\nA przeciez zaczelo sie tak niewinnie\nPapier byl wtedy czescia naszej zabawy\nI chyba nikt sie tego nie spodziewal\nEwentualnie mozesz przeczytac to jeszcze raz\nRozwiazanie jest na samym poczatku\n\nOdczytaj pierwsze litery każdego wersu.",hint:"Nie zawsze trzeba czytać całe zdania. Czasami wystarczą ich początki.",answers:["PAPIER"],success:"Odzyskano wspomnienie z pierwszego spotkania.",placeholder:"Wpisz ukryte słowo"},
+{title:"ETAP 4 — ZEGAR BINARNY",cipher:"10000 : 10000",desc:"System dziesiętny nie jest jedynym systemem. Zamień liczby z systemu binarnego na dziesiętny i odzyskaj godzinę rozpoczęcia naszej historii.",hint:"Kolejne pozycje liczby binarnej mają wartości 16, 8, 4, 2, 1.",answers:["1616","16:16"],success:"Synchronizacja czasu zakończona. Odzyskano godzinę 16:16.",placeholder:"Wpisz odzyskaną godzinę"},
+{title:"ETAP 5 — UKRYTE WSPÓŁRZĘDNE",cipher:"41 – 43 – 35 – 25 – 15 – 31 – 45 – 35 – 43",desc:"Każda para cyfr prowadzi do jednej litery. Pierwsza cyfra oznacza wiersz, a druga kolumnę. Odszyfruj ukryty przedmiot.",hint:"Współrzędne 41 oznaczają czwarty wiersz i pierwszą kolumnę.",answers:["PROJEKTOR"],success:"Zidentyfikowano pierwszy prezent od Julki.",placeholder:"Wpisz nazwę przedmiotu"},
+{title:"ETAP 6 — OSTATECZNE ZABEZPIECZENIE",cipher:"ACCESS CODE: _ _ _ _ _ _ _ _",desc:"Wszystkie wspomnienia zostały odzyskane. Pozostało ostatnie zabezpieczenie. Stwórz ośmiocyfrowy kod:\n\n1. Weź numer dnia rozpoczęcia naszego związku.\n2. Dodaj liczbę liter odszyfrowanego miejsca pierwszego pocałunku.\n3. Dopisz liczbę liter przedmiotu z pierwszego spotkania.\n4. Dopisz godzinę rozpoczęcia związku bez dwukropka.\n5. Na końcu dopisz liczbę liter nazwy pierwszego prezentu, który od ciebie dostałem.",hint:"13 + 7 = 20. PAPIER ma 6 liter. Godzina to 1616. PROJEKTOR ma 9 liter. Połącz te liczby w podanej kolejności.",answers:["20616169"],success:"Ostatnie zabezpieczenie zostało przełamane.",placeholder:"Wpisz ośmiocyfrowy kod"}
+];
+let missionIndex=0,wrongAttempts=0,missionUnlocked=false;
+const missionKey="projekt1616Progress";
+function cleanAnswer(v){return v.trim().toUpperCase().replace(/\s+/g,"")}
+function saveMission(){try{localStorage.setItem(missionKey,JSON.stringify({unlocked:missionUnlocked,index:missionIndex}))}catch(e){}}
+function loadMission(){try{const d=JSON.parse(localStorage.getItem(missionKey)||"null");if(d&&d.unlocked){missionUnlocked=true;missionIndex=6}else if(d&&Number.isInteger(d.index)){missionIndex=Math.max(0,Math.min(5,d.index))}}catch(e){}}
+function restoreMission(){loadMission();if(missionUnlocked){document.getElementById("missionIntro").style.display="none";document.getElementById("missionGame").style.display="none";document.getElementById("missionComplete").style.display="block";document.getElementById("confessionView").style.display="none"}}
+function startMission(){loadMission();document.getElementById("missionIntro").style.display="none";if(missionUnlocked){document.getElementById("missionComplete").style.display="block";return}document.getElementById("missionGame").style.display="block";renderMissionStage()}
+function renderMissionStage(){
+const step=missionSteps[missionIndex];wrongAttempts=0;
+document.getElementById("missionStageLabel").textContent="ETAP "+(missionIndex+1)+"/6";
+document.getElementById("missionCount").textContent=missionIndex+"/6 UKOŃCZONO";
+document.getElementById("missionProgressBar").style.width=(missionIndex/6*100)+"%";
+let grid="";
+if(missionIndex===4){const rows=["A B C D E","F G H I J","K L M N O","P Q R S T","U V W X Y"];grid='<div class="grid25"><div class="axis"> </div>'+[1,2,3,4,5].map(n=>'<div class="axis">'+n+'</div>').join("");rows.forEach((r,i)=>{grid+='<div class="axis">'+(i+1)+'</div>'+r.split(" ").map(c=>'<div>'+c+'</div>').join("")});grid+="</div>"}
+const desc=step.desc.replace(/\n/g,"<br>");
+document.getElementById("missionStage").innerHTML='<div class="mission-panel"><div style="color:#a78bfa;font-size:12px;letter-spacing:2px">SECURITY LAYER '+(missionIndex+1)+' // IN PROGRESS</div><h3>'+step.title+'</h3><div class="cipher">'+step.cipher+'</div>'+grid+'<p class="terminal-text">'+desc+'</p><label for="missionAnswer">ODPOWIEDŹ:</label><input id="missionAnswer" autocomplete="off" placeholder="'+step.placeholder+'"><button onclick="verifyMissionAnswer()">ZWERYFIKUJ</button><p class="feedback" id="missionFeedback" aria-live="polite"></p><p class="hint" id="missionHint">PODPOWIEDŹ: '+step.hint+'</p><p class="small">Brak limitu czasu. Po trzech błędnych próbach pojawi się podpowiedź.</p></div>';
+document.getElementById("missionAnswer").addEventListener("keydown",e=>{if(e.key==="Enter")verifyMissionAnswer()});
+}
+function verifyMissionAnswer(){
+const input=document.getElementById("missionAnswer"),feedback=document.getElementById("missionFeedback"),step=missionSteps[missionIndex];
+const answer=cleanAnswer(input.value);if(!answer){feedback.textContent="Wpisz odpowiedź, aby kontynuować.";return}
+if(step.answers.includes(answer)){
+feedback.className="feedback";feedback.textContent="✓ "+step.success;input.disabled=true;
+const button=document.querySelector("#missionStage button");button.textContent=missionIndex===5?"ZAKOŃCZ WERYFIKACJĘ":"NASTĘPNY ETAP";button.onclick=nextMissionStage;
+}else{
+wrongAttempts++;feedback.className="feedback denied";feedback.textContent="✗ Odmowa dostępu. Spróbuj ponownie.";
+if(wrongAttempts>=3)document.getElementById("missionHint").style.display="block";
+}
+}
+function nextMissionStage(){
+missionIndex++;saveMission();
+if(missionIndex>=6){missionUnlocked=true;saveMission();document.getElementById("missionGame").style.display="none";document.getElementById("missionComplete").style.display="block"}
+else renderMissionStage();
+}
+function openConfession(){document.getElementById("missionTerminal").style.display="none";document.getElementById("confessionView").style.display="block"}
+</script>
+</body>
+</html>
